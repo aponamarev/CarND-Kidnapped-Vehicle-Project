@@ -5,4 +5,8 @@ solution
 solution_data
 src/particle_filter_sol.cpp
 src/solutions
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+PARTICLE_FILTER.xcodeproj/
 # particle_filter.cpp
