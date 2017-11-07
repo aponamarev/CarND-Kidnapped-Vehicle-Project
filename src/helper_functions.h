@@ -58,6 +58,38 @@ inline double dist(double x1, double y1, double x2, double y2) {
 	return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
+
+inline double pdf_xy(std::vector<LandmarkObs> &pred, std::vector<LandmarkObs> &obs, double std[]) {
+    
+    double w = 1;
+    // Anxiliary computations
+    const double sqrt2pi = sqrt(2*M_PI);
+    
+    for (int i=0; i<obs.size(); i++) {
+        LandmarkObs Mu = obs[i];
+        for (int j=0; j<pred.size(); j++) {
+            if (pred[j].id==Mu.id) {
+                LandmarkObs X = pred[j];
+                /*
+                 // Matrix format
+                 // w = ∏ exp(-0.5 * (x(i) - µ(i)).T * ∑^-1 * (x(i) - µ(i))) / sqrt(2π*∑)
+                 // Isolated dimention format
+                 // = ∏ exp( -0.5 * ((x(i) - µ(i))/ø(i))^2 ) / (ø(i)*sqrt(2π))
+                 */
+                double norm_xd = (X.x - Mu.x) / std[0];
+                double norm_yd = (X.y - Mu.y) / std[1];
+                
+                w *= exp(-0.5*norm_xd*norm_xd) / ( std[0]*sqrt2pi );
+                w *= exp(-0.5*norm_yd*norm_yd) / ( std[1]*sqrt2pi );
+                break;
+            }
+        }
+    }
+    
+    return w;
+}
+
+
 inline double * getError(double gt_x, double gt_y, double gt_theta, double pf_x, double pf_y, double pf_theta) {
 	static double error[3];
 	error[0] = fabs(pf_x - gt_x);
